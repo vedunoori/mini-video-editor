@@ -1,23 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import VideoPlayer from './components/VideoPlayer';
+import TextOverlayEditor from './components/TextOverlayEditor';
+import ImageOverlayEditor from './components/ImageOverlayEditor';
+import './styles/App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div className='container centered '>
+    {/* Header Section */}
+      <header className="header-section">
+        <h1 className="header-title">Mini Video Editor</h1>
       </header>
+      <VideoPlayer />
+      {/* <TextOverlayEditor /> */}
+      <ImageOverlayEditor />
     </div>
   );
 }
