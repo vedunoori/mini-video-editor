@@ -1,21 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ReactPlayer from 'react-player';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile } from '@ffmpeg/util';
-import { Button, CircularProgress } from '@mui/material';
+import { Box, Button, CircularProgress } from '@mui/material';
 import TextOverlayEditor from './TextOverlayEditor';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   setVideoFile,
   setTrimTimes,
-  resetState,
   setOutputVideo,
+  updateOverlay,
 } from '../store/editorStore';
+import Draggable from 'react-draggable';
 
 const VideoPlayer = () => {
   const dispatch = useDispatch();
   const { videoFile, startTime, endTime, overlays } = useSelector((state) => state.editor);
-  const outputVideo = useSelector((state) => state.editor.outputVideo);
+  // const outputVideo = useSelector((state) => state.editor.outputVideo);
 
   const playerRef = useRef(null);
   const [startInput, setStartInput] = useState(startTime);
@@ -43,7 +44,6 @@ const VideoPlayer = () => {
     }
   };
 
-  // Handle save trim action
   const handleSaveTrim = async () => {
     const start = parseFloat(startInput);
     const end = parseFloat(endInput);
@@ -65,6 +65,10 @@ const VideoPlayer = () => {
     }
   };
 
+  
+
+  
+
   // Trim video with FFmpeg
   const trimVideo = async (start, end, adjustedOverlays) => {
     try {
@@ -80,18 +84,19 @@ const VideoPlayer = () => {
         '-ss', `${start}`,
         '-to', `${end}`,
         '-c:v', 'libx264',
+        //   "-vf", drawtext=text='${text}':fontcolor=white:fontsize=24:x=(w-text_w)/2:y=(h-text_h)/2:enable='between(t,${start},${end})',
         '-preset', 'fast',
         '-crf', '23',
         'output.mp4',
       ]);
+
   
       // Read trimmed video
       const data = await ffmpeg.readFile('output.mp4');
   
       // Convert output to URL
       const videoURL = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-  
-      // setOutputVideo(videoURL); // Set locally
+
       dispatch(setOutputVideo(videoURL)); // Save in Redux store
       setIsLoaded(false);
     } catch (error) {
@@ -104,11 +109,14 @@ const VideoPlayer = () => {
   const handleProgress = (progress) => {
     setCurrentTime(progress.playedSeconds);
   };
-
+  const handleUpdatePosition = (id, position) => {
+    dispatch(updateOverlay({ id, changes: { position } }));
+  };
   return (
     <div className="container">
       <section className="video-section">
         <input type="file" accept="video/*" onChange={handleUpload} />
+
         {videoFile && (
           <div className="video-container" style={{ position: 'relative' }}>
             <ReactPlayer
@@ -120,8 +128,31 @@ const VideoPlayer = () => {
               onProgress={handleProgress}
             />
 
+{overlays
+          .filter((o) => o.type === 'text')
+          .map((overlay) => (
+            <Draggable
+              key={overlay.id}
+              defaultPosition={overlay.position}
+              onStop={(e, data) => handleUpdatePosition(overlay.id, { x: data.x, y: data.y })}
+            >
+              <Box
+                sx={{
+                  position: 'absolute',
+                  fontSize: `${overlay.content.fontSize}px`,
+                  color: overlay.content.fontColor,
+                  fontFamily: overlay.content.fontFamily,
+                  cursor: 'move',
+                  userSelect: 'none',
+                }}
+              >
+                {overlay.content.text}
+              </Box>
+            </Draggable>
+          ))}
+
             {/* Text Overlays */}
-            {overlays
+            {/* {overlays
               .filter((overlay) => overlay.type === 'text' && overlay.timestamp <= currentTime)
               .map((overlay) => (
                 <div
@@ -139,7 +170,7 @@ const VideoPlayer = () => {
                 >
                   {overlay.content.text}
                 </div>
-              ))}
+              ))} */}
           </div>
         )}
       </section>

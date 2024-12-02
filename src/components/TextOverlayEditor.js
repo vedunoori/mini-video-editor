@@ -102,46 +102,6 @@ const TextOverlayEditor = () => {
           Add Text
         </Button>
       </Box>
-
-      {/* Text Overlays Display */}
-      {/* <Box sx={{ position: 'relative', border: '1px solid #ddd', padding: '10px', minHeight: '300px' }}>
-        {overlays
-          .filter((o) => o.type === 'text')
-          .map((overlay) => (
-            <Draggable
-              key={overlay.id}
-              defaultPosition={overlay.position}
-              onStop={(e, data) => handleUpdatePosition(overlay.id, { x: data.x, y: data.y })}
-            >
-              <Box
-                sx={{
-                  position: 'absolute',
-                  fontSize: `${overlay.content.fontSize}px`,
-                  color: overlay.content.fontColor,
-                  fontFamily: overlay.content.fontFamily,
-                  cursor: 'move',
-                  userSelect: 'none',
-                }}
-              >
-                {overlay.content.text}
-              </Box>
-            </Draggable>
-          ))}
-      </Box> */}
-
-      {/* Footer Section */}
-      <Box
-        sx={{
-          marginTop: '20px',
-          borderTop: '1px solid #ccc',
-          paddingTop: '10px',
-          textAlign: 'center',
-        }}
-      >
-        <Typography variant="body2" color="textSecondary">
-          Drag and position text overlays in the editor.
-        </Typography>
-      </Box>
     </Box>
   );
 };

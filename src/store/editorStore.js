@@ -21,7 +21,7 @@ const editorSlice = createSlice({
       state.endTime = end;
     },
     setOutputVideo: (state, action) => {
-      state.outputVideo = action.payload; // Action to set the trimmed video URL
+      state.outputVideo = action.payload; 
     },
     addOverlay: (state, action) => {
       state.overlays.push(action.payload);

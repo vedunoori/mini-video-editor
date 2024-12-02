@@ -75,7 +75,7 @@ const ImageOverlayEditor = () => {
           <h3>Trimmed Video:</h3>
           <video src={outputVideo} controls width="400" />
           <p>
-            Trim Start: {startTime}s | Trim End: {endTime}s
+            {/* Trim Start: {startTime}s | Trim End: {endTime}s */}
           </p>
         </section>
       )}
