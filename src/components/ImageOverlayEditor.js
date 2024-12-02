@@ -6,7 +6,11 @@ import { Box, Button } from '@mui/material';
 
 const ImageOverlayEditor = () => {
   const dispatch = useDispatch();
-  const overlays = useSelector((state) => state.editor.overlays);
+  const { videoFile, startTime, endTime, overlays } = useSelector((state) => state.editor);
+  // const overlays = useSelector((state) => state.editor.overlays);
+  console.log("startTime",startTime,endTime)
+  const outputVideo = useSelector((state) => state.editor.outputVideo);
+
   const [image, setImage] = useState(null);
 
   const handleImageUpload = (e) => {
@@ -65,6 +69,16 @@ const ImageOverlayEditor = () => {
             />
           </Draggable>
         ))}
+
+{outputVideo && (
+        <section className="trimmed-video-section">
+          <h3>Trimmed Video:</h3>
+          <video src={outputVideo} controls width="400" />
+          <p>
+            Trim Start: {startTime}s | Trim End: {endTime}s
+          </p>
+        </section>
+      )}
     </Box>
   );
 };

@@ -104,7 +104,7 @@ const TextOverlayEditor = () => {
       </Box>
 
       {/* Text Overlays Display */}
-      <Box sx={{ position: 'relative', border: '1px solid #ddd', padding: '10px', minHeight: '300px' }}>
+      {/* <Box sx={{ position: 'relative', border: '1px solid #ddd', padding: '10px', minHeight: '300px' }}>
         {overlays
           .filter((o) => o.type === 'text')
           .map((overlay) => (
@@ -127,7 +127,7 @@ const TextOverlayEditor = () => {
               </Box>
             </Draggable>
           ))}
-      </Box>
+      </Box> */}
 
       {/* Footer Section */}
       <Box

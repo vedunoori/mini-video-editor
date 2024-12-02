@@ -9,16 +9,18 @@ import {
   setVideoFile,
   setTrimTimes,
   resetState,
+  setOutputVideo,
 } from '../store/editorStore';
 
 const VideoPlayer = () => {
   const dispatch = useDispatch();
   const { videoFile, startTime, endTime, overlays } = useSelector((state) => state.editor);
-  
+  const outputVideo = useSelector((state) => state.editor.outputVideo);
+
   const playerRef = useRef(null);
   const [startInput, setStartInput] = useState(startTime);
   const [endInput, setEndInput] = useState(endTime);
-  const [outputVideo, setOutputVideo] = useState(null);
+  // const [outputVideo, setOutputVideo] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [ffmpeg] = useState(new FFmpeg({ log: true }));
   const [isLoaded, setIsLoaded] = useState(false);
@@ -68,10 +70,10 @@ const VideoPlayer = () => {
     try {
       // Load FFmpeg
       await loadFFmpeg();
-
+  
       // Write input video file to FFmpeg's virtual file system
       await ffmpeg.writeFile('input.mp4', await fetchFile(videoFile));
-
+  
       // Trim video using FFmpeg
       await ffmpeg.exec([
         '-i', 'input.mp4',
@@ -82,24 +84,22 @@ const VideoPlayer = () => {
         '-crf', '23',
         'output.mp4',
       ]);
-
+  
       // Read trimmed video
       const data = await ffmpeg.readFile('output.mp4');
-
+  
       // Convert output to URL
       const videoURL = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-      setOutputVideo(videoURL);
+  
+      // setOutputVideo(videoURL); // Set locally
+      dispatch(setOutputVideo(videoURL)); // Save in Redux store
       setIsLoaded(false);
     } catch (error) {
       console.error('Error trimming video:', error);
       alert('Failed to trim video. Please check the console for details.');
     }
   };
-
-  // const handleReset = () => {
-  //   dispatch(resetState());
-
-  // };
+  
 
   const handleProgress = (progress) => {
     setCurrentTime(progress.playedSeconds);
@@ -185,15 +185,7 @@ const VideoPlayer = () => {
         </section>
       )}
 
-      {outputVideo && (
-        <section className="trimmed-video-section">
-          <h3>Trimmed Video:</h3>
-          <video src={outputVideo} controls width="400" />
-          <p>
-            Trim Start: {startInput}s | Trim End: {endInput}s
-          </p>
-        </section>
-      )}
+      
 
       <TextOverlayEditor />
     </div>
